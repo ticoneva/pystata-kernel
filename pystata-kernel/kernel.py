@@ -1,16 +1,17 @@
 '''
 pystata-kernel
-Version: 0.1.2
+Version: 0.1.3
 A simple Jupyter kernel based on pystata.
 Requires Stata 17 and stata_setup.
 '''
 
 from ipykernel.ipkernel import IPythonKernel
 import stata_setup
+from config import get_config
 
 class PyStataKernel(IPythonKernel):
     implementation = 'pystata-kernel'
-    implementation_version = '0.1.2'
+    implementation_version = '0.1.3'
     language = 'stata'
     language_version = '17'
     language_info = {
@@ -30,7 +31,8 @@ class PyStataKernel(IPythonKernel):
 
         # Launch Stata if it has not been launched yet
         if not self.stata_ready:
-            stata_setup.config("/opt/stata","mp")
+            env = get_config()
+            stata_setup.config(env['stata_dir'],env['edition'])
             self.stata_ready = True
         
         # Execute Stata code
