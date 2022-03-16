@@ -5,7 +5,7 @@ with open('README.md') as f:
 
 setup(
     name='pystata-kernel',
-    version='0.1.1',
+    version='0.1.2',
     packages=['pystata-kernel'],
     description='A simple Jupyter kernel for Stata based on pystata',
     long_description=readme,

@@ -11,4 +11,4 @@ pip install git+https://github.com/ticoneva/pystata-kernel
 python -m pystata-kernel.install [--sys-prefix]
 ```
 
-Include `--sys-prefix` if you are installing pystata-kernel in a multi-user environment.
+Include `--sys-prefix` if you are installing `pystata-kernel` in a multi-user environment.
