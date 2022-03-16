@@ -15,6 +15,7 @@ setup(
     install_requires=[
         'jupyter-client', 'ipython', 'ipykernel','stata-setup'
     ],
+    include_package_data=True,
     classifiers=[
         'Intended Audience :: Developers',
         'License :: OSI Approved :: BSD License',
