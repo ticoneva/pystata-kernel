@@ -12,3 +12,10 @@ python -m pystata-kernel.install [--sys-prefix]
 ```
 
 Include `--sys-prefix` if you are installing `pystata-kernel` in a multi-user environment.
+
+Syntax highlighting is the same as `stata_kernel`:
+
+```sh
+conda install nodejs -c conda-forge --repodata-fn=repodata.json
+jupyter labextension install jupyterlab-stata-highlight
+```
