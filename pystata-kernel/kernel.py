@@ -7,7 +7,7 @@ Requires Stata 17 and stata_setup.
 
 from ipykernel.ipkernel import IPythonKernel
 import stata_setup
-from config import get_config
+from .config import get_config
 
 class PyStataKernel(IPythonKernel):
     implementation = 'pystata-kernel'
