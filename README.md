@@ -14,15 +14,16 @@ python -m pystata-kernel.install [--sys-prefix] [--prefix]
 Include `--sys-prefix` if you are installing `pystata-kernel` in a multi-user environment,
 or `--prefix` if you want to specify a path yourself.
 
-The installation scripts will try to determine the location of your Stata installation
+The installation script will try to determine the location of your Stata installation
 and write it to a configuration file. 
 You can manually modify this file if the installation script fails to detect your
-stata installation.  
+stata installation. 
 The configuration file is saved under:
-- `*prefix*/etc/pykernel-stata.conf` if `--sys-prefix` or `--prefix` is specified.
+
+- `[prefix]/etc/pykernel-stata.conf` if `--sys-prefix` or `--prefix` is specified.
 -  `~/.pykernel-stata.conf` otherwise.
 
-If a configuration file exists in both location, the user version takes precedent. 
+If a configuration file exists in both locations, the user version takes precedent. 
 
 Syntax highlighting is the same as `stata_kernel`:
 
