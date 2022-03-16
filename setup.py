@@ -1,12 +1,13 @@
 from distutils.core import setup
 
-with open('README.md') as f:
+with open('README.rst') as f:
     readme = f.read()
 
 setup(
     name='pystata-kernel',
-    version='0.1.5',
+    version='0.1.7',
     packages=['pystata-kernel'],
+    package_data={'pystata-kernel': ['logo-64x64.png']},
     description='A simple Jupyter kernel for Stata based on pystata',
     long_description=readme,
     author='Vinci Chow',

@@ -1,6 +1,6 @@
 '''
 pystata-kernel
-Version: 0.1.5
+Version: 0.1.7
 A simple Jupyter kernel based on pystata.
 Requires Stata 17 and stata_setup.
 '''
@@ -11,7 +11,7 @@ from .config import get_config
 
 class PyStataKernel(IPythonKernel):
     implementation = 'pystata-kernel'
-    implementation_version = '0.1.5'
+    implementation_version = '0.1.7'
     language = 'stata'
     language_version = '17'
     language_info = {
