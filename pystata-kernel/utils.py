@@ -2,7 +2,6 @@
 
 import os
 import re
-import requests
 import platform
 
 from shutil import which
