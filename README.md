@@ -1,12 +1,12 @@
 # pystata-kernel
 
 A simple Jupyter kernel for Stata based on pystata. Requires Stata 17 or above.
-If you have an older version of Stata, consider [stata_kernel](https://github.com/kylebarron/stata_kernel) instead.
+Consider [stata_kernel](https://github.com/kylebarron/stata_kernel) instead if you have an older version of Stata. 
 
 ### Installation
-To install `pystata-kernel` from PyPI::
+To install `pystata-kernel` from PyPI:
 
 ```python
-pip install pytstata-kernel
-python -m echo_kernel.install [--sys-prefix]
+pip install pystata-kernel
+python -m pystata-kernel.install [--sys-prefix]
 ```
