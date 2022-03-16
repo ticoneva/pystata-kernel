@@ -87,7 +87,10 @@ def main(argv=None):
         if args.user:
             conf_file = Path('~/.pystata-kernel.conf').expanduser()
         else:
-            conf_file = Path(os.path.join(args.prefix,'etc','pystata-kernel.conf'))
+            conf_dir = os.path.join(args.prefix,'etc')
+            if not Path(os.path.join(args.prefix,'etc')).is_dir:
+                os.mkdir(conf_dir)
+            conf_file = Path(os.path.join(conf_dir,'pystata-kernel.conf'))
         if not conf_file.is_file():
             install_conf(conf_file)
 
