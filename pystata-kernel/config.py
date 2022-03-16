@@ -14,8 +14,8 @@ def get_config():
             config = ConfigParser()
             config.read(str(user_config_path))
         else:
-            config = ConfigParser(str(global_config_path))
-            config.read()
+            config = ConfigParser()
+            config.read(str(global_config_path))
 
         env.update(dict(config.items('pystata-kernel')))
     except:

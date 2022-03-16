@@ -8,6 +8,7 @@ from IPython.utils.tempdir import TemporaryDirectory
 from pkg_resources import resource_filename
 from shutil import copyfile
 from pathlib import Path
+from textwrap import dedent
 
 kernel_json = {
     "argv": [sys.executable, "-m", "pystata-kernel", "-f", "{connection_file}"],
