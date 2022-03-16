@@ -5,6 +5,8 @@ import sys
 
 from jupyter_client.kernelspec import KernelSpecManager
 from IPython.utils.tempdir import TemporaryDirectory
+from pkg_resources import resource_filename
+from shutil import copyfile
 
 kernel_json = {
     "argv": [sys.executable, "-m", "pystata-kernel", "-f", "{connection_file}"],
@@ -17,10 +19,13 @@ def install_my_kernel_spec(user=True, prefix=None):
         os.chmod(td, 0o755) # Starts off as 700, not user readable
         with open(os.path.join(td, 'kernel.json'), 'w') as f:
             json.dump(kernel_json, f, sort_keys=True)
-        # TODO: Copy any resources
+
+        # Copy logo to tempdir to be installed with kernelspec
+        logo_path = resource_filename('pystata-kernel', 'logo-64x64.png')
+        copyfile(logo_path, os.path.join(td, 'logo-64x64.png'))
 
         print('Installing Jupyter kernel spec')
-        KernelSpecManager().install_kernel_spec(td, 'echo', user=user, replace=True, prefix=prefix)
+        KernelSpecManager().install_kernel_spec(td, 'pystata', user=user, replace=True, prefix=prefix)
 
 def _is_root():
     try:
