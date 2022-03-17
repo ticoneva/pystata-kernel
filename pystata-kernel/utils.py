@@ -37,7 +37,9 @@ def find_path():
 def win_find_path():
     import winreg
     reg = winreg.ConnectRegistry(None, winreg.HKEY_CLASSES_ROOT)
-    subkeys = [r'Stata17Do\shell\do\command']
+    subkeys = [r'Stata17Do\shell\do\command',
+                r'Stata18Do\shell\do\command',
+                r'Stata19Do\shell\do\command']
 
     fpath = ''
     for subkey in subkeys:

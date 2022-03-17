@@ -75,8 +75,8 @@ def main(argv=None):
         help="Install to the given prefix. "
              "Kernelspec will be installed in {PREFIX}/share/jupyter/kernels/")
     ap.add_argument(
-        '--no-conf-file', action='store_true',
-        help="Skip the creation of a default user configuration file.")             
+        '--conf-file', action='store_true',
+        help="Create a configuration file.")             
     args = ap.parse_args(argv)
 
     if args.sys_prefix:
@@ -85,7 +85,7 @@ def main(argv=None):
         args.user = True
 
     install_my_kernel_spec(user=args.user, prefix=args.prefix)
-    if not args.no_conf_file:
+    if args.conf_file:
         if args.user:
             conf_file = Path('~/.pystata-kernel.conf').expanduser()
         else:
