@@ -7,7 +7,7 @@ Consider [stata_kernel](https://github.com/kylebarron/stata_kernel) instead if y
 To install `pystata-kernel`:
 
 ```python
-pip install git+https://github.com/ticoneva/pystata-kernel
+pip install pystata-kernel
 python -m pystata-kernel.install [--sys-prefix] [--prefix]
 ```
 
