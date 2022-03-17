@@ -1,4 +1,4 @@
-# From stata_kernel
+# From stata_kernel 1.12
 
 import os
 import re
@@ -6,6 +6,17 @@ import platform
 
 from shutil import which
 from pathlib import Path
+
+def find_dir_edition():
+    stata_path = find_path()
+    stata_dir = str(os.path.dirname(stata_path))
+    stata_exe = str(os.path.basename(stata_path)).lower()
+
+    edition = 'be'
+    for e in ('se','mp'):
+        if stata_exe.find(e) > -1:
+            edition = e            
+    return (stata_dir,e)
 
 def find_path():
     if os.getenv('CONTINUOUS_INTEGRATION'):
@@ -23,14 +34,10 @@ def find_path():
 
         return stata_path
 
-
 def win_find_path():
     import winreg
     reg = winreg.ConnectRegistry(None, winreg.HKEY_CLASSES_ROOT)
-    subkeys = [r'Stata17Do\shell\do\command',
-        r'Stata16Do\shell\do\command', r'Stata15Do\shell\do\command',
-        r'Stata14Do\shell\do\command', r'Stata13Do\shell\do\command',
-        r'Stata12Do\shell\do\command']
+    subkeys = [r'Stata17Do\shell\do\command']
 
     fpath = ''
     for subkey in subkeys:

@@ -10,6 +10,8 @@ from shutil import copyfile
 from pathlib import Path
 from textwrap import dedent
 
+from .utils import find_dir_edition
+
 kernel_json = {
     "argv": [sys.executable, "-m", "pystata-kernel", "-f", "{connection_file}"],
     "display_name": "Stata",
@@ -38,7 +40,7 @@ def install_conf(conf_file):
     # complete the installation process in virtual environments
     # without needing this submodule nor its downstream imports.
     from .utils import find_path
-    stata_dir = os.path.dirname(find_path())
+    stata_dir,stata_ed = find_dir_edition()
     if not stata_dir:
         msg = """\
             WARNING: Could not find Stata path.
@@ -51,8 +53,8 @@ def install_conf(conf_file):
     [pystata-kernel]
     # Directory containing stata executable.
     stata_dir = {}
-    edition = mp
-    """.format(stata_dir))
+    edition = {}
+    """.format(stata_dir,stata_ed))
 
     with conf_file.open('w') as f:
         f.write(conf_default)
