@@ -18,9 +18,10 @@ or `--prefix` if you want to specify a path yourself.
 
 The kernel will try to determine the location of your Stata installation at startup. 
 You can create a configuration file to preempt this detection with the `--conf-file` option.
-The configuration file will be automatically created if the installer cannot find any 
-Stata installation.
-The location of this file is:
+Even if you do not include this option, the configuration file will still be created if the 
+installer cannot find any Stata installation.
+
+The location of the configuration file is:
 
 - `[prefix]/etc/pykernel-stata.conf` if `--sys-prefix` or `--prefix` is specified.
 -  `~/.pykernel-stata.conf` otherwise.
