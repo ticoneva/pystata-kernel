@@ -31,7 +31,7 @@ def install_my_kernel_spec(user=True, prefix=None):
         print('Installing Jupyter kernel spec')
         KernelSpecManager().install_kernel_spec(td, 'pystata', user=user, replace=True, prefix=prefix)
 
-def install_conf(conf_file):
+def install_conf(conf_file,gen_file=False):
     """
     From stata_kernel, but the conf here is much simplier.
     """
@@ -42,11 +42,12 @@ def install_conf(conf_file):
     from .utils import find_path
     stata_dir,stata_ed = find_dir_edition()
     if not stata_dir:
+        gen_file = True
         msg = """\
             WARNING: Could not find Stata path.
-            Please specify it manually in configuration file: 
+            Please specify it manually in configuration file. 
             """
-        print(dedent(msg),str(conf_file))
+        print(dedent(msg))
     
     conf_default = dedent(
         """\
@@ -56,8 +57,15 @@ def install_conf(conf_file):
     edition = {}
     """.format(stata_dir,stata_ed))
 
-    with conf_file.open('w') as f:
-        f.write(conf_default)
+    if gen_file:
+        print("Creating configuration file at:")
+        print(str(conf_file))
+        try:
+            with conf_file.open('w') as f:
+                f.write(conf_default)
+            print("Success!")
+        except:
+            print("Failed!")
 
 def _is_root():
     try:
@@ -85,16 +93,15 @@ def main(argv=None):
         args.user = True
 
     install_my_kernel_spec(user=args.user, prefix=args.prefix)
-    if args.conf_file:
-        if args.user:
-            conf_file = Path('~/.pystata-kernel.conf').expanduser()
-        else:
-            conf_dir = os.path.join(args.prefix,'etc')
-            if not Path(os.path.join(args.prefix,'etc')).is_dir():
-                os.mkdir(conf_dir)
-            conf_file = Path(os.path.join(conf_dir,'pystata-kernel.conf'))
-        if not conf_file.is_file():
-            install_conf(conf_file)
+    if args.user:
+        conf_file = Path('~/.pystata-kernel.conf').expanduser()
+    else:
+        conf_dir = os.path.join(args.prefix,'etc')
+        if not Path(os.path.join(args.prefix,'etc')).is_dir():
+            os.mkdir(conf_dir)
+        conf_file = Path(os.path.join(conf_dir,'pystata-kernel.conf'))
+    if not conf_file.is_file():
+        install_conf(conf_file,args.conf_file)
 
 if __name__ == '__main__':
     main()
