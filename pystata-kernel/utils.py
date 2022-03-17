@@ -16,7 +16,7 @@ def find_dir_edition():
     for e in ('se','mp'):
         if stata_exe.find(e) > -1:
             edition = e            
-    return (stata_dir,e)
+    return (stata_dir,edition)
 
 def find_path():
     if os.getenv('CONTINUOUS_INTEGRATION'):

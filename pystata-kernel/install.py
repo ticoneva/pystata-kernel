@@ -10,7 +10,7 @@ from shutil import copyfile
 from pathlib import Path
 from textwrap import dedent
 
-from .utils import find_dir_edition
+
 
 kernel_json = {
     "argv": [sys.executable, "-m", "pystata-kernel", "-f", "{connection_file}"],
@@ -39,7 +39,7 @@ def install_conf(conf_file,gen_file=False):
     # By avoiding an import of .utils until we need it, we can
     # complete the installation process in virtual environments
     # without needing this submodule nor its downstream imports.
-    from .utils import find_path
+    from .utils import find_dir_edition
     stata_dir,stata_ed = find_dir_edition()
     if not stata_dir:
         gen_file = True
