@@ -60,7 +60,7 @@ Both `pystata` and `stata_kernel` default to the SVG image format.
 `pystata-kernel` defaults to the PNG image format instead for several reasons:
 
 - Jupyter does not show SVG images from untrusted notebooks ([link 1](https://stackoverflow.com/questions/68398033/svg-figures-hidden-in-jupyterlab-after-some-time)).
-- Notebooks with empty cells are untrusted ([link 2](https://github.com/jupyterlab/jupyterlab/issues/9765))
+- Notebooks with empty cells are untrusted ([link 2](https://github.com/jupyterlab/jupyterlab/issues/9765)).
 - SVG images cannot be copied and pasted directly into Word or PowerPoint.
 
 These issues make the SVG format unsuitable for use in a pedagogical setting, 
