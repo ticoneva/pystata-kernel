@@ -52,9 +52,9 @@ def install_conf(conf_file,gen_file=False):
     conf_default = dedent(
         """\
     [pystata-kernel]
-    # Directory containing stata executable.
     stata_dir = {}
     edition = {}
+    graph_format = png
     """.format(stata_dir,stata_ed))
 
     if gen_file:

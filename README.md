@@ -34,3 +34,34 @@ Syntax highlighting is the same as `stata_kernel`:
 conda install nodejs -c conda-forge --repodata-fn=repodata.json
 jupyter labextension install jupyterlab-stata-highlight
 ```
+
+### Configuration
+
+The following settings are permitted inside the configuration file:
+
+- `stata_dir`: Stata installation directory.
+- `edition`: Stata edition. Acceptable values are 'be', 'se' and 'mp'.
+    Default is 'be'.
+- `graph_format`: Graph format. Acceptable values are 'png', 'pdf', 'svg' and 'pystata'.
+    Specify the last option if you want to use `pystata`'s setting. Default is 'png'. 
+
+Settings must be under the title `[pystata-kernel]`. Example:
+
+```
+[pystata-kernel]
+stata_dir = /opt/stata
+edition = mp
+graph_format = svg
+```
+
+### Default Graph Format
+
+Both `pystata` and `stata_kernel` default to the SVG image format. 
+`pystata-kernel` defaults to the PNG image format instead for several reasons:
+
+- Jupyter does not show SVG images from untrusted notebooks ([link 1](https://stackoverflow.com/questions/68398033/svg-figures-hidden-in-jupyterlab-after-some-time)).
+- Notebooks with empty cells are untrusted ([link 2](https://github.com/jupyterlab/jupyterlab/issues/9765))
+- SVG images cannot be copied and pasted directly into Word or PowerPoint.
+
+These issues make the SVG format unsuitable for use in a pedagogical setting, 
+which is my primary use of a Jupyter kernel for Stata. 
