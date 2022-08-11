@@ -55,6 +55,7 @@ Settings must be under the title `[pystata-kernel]`. Example:
 stata_dir = /opt/stata
 edition = mp
 graph_format = svg
+echo = True
 ```
 
 ### Default Graph Format

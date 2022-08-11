@@ -29,7 +29,7 @@ def install_my_kernel_spec(user=True, prefix=None):
         copyfile(logo_path, os.path.join(td, 'logo-64x64.png'))
 
         print('Installing Jupyter kernel spec')
-        KernelSpecManager().install_kernel_spec(td, 'pystata', user=user, replace=True, prefix=prefix)
+        KernelSpecManager().install_kernel_spec(td, 'pystata', user=user, prefix=prefix)
 
 def install_conf(conf_file,gen_file=False):
     """
@@ -55,6 +55,7 @@ def install_conf(conf_file,gen_file=False):
     stata_dir = {}
     edition = {}
     graph_format = png
+    echo = False
     """.format(stata_dir,stata_ed))
 
     if gen_file:
