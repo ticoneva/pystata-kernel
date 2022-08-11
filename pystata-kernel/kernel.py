@@ -26,6 +26,7 @@ class PyStataKernel(IPythonKernel):
         super().__init__(**kwargs)
         self.stata_ready = False
         self.shell.execution_count = 0
+        self.echo = False
 
     def do_execute(self, code, silent, store_history=True, user_expressions=None,
                    allow_stdin=False):
@@ -43,12 +44,15 @@ class PyStataKernel(IPythonKernel):
                 pass
             else:
                 set_graph_format(env['graph_format'])
+
+            if env['echo'] == 'True':
+                self.echo = True
             
             self.stata_ready = True
         
         # Execute Stata code
         from pystata.stata import run
-        run(code, quietly=False, inline=True)
+        run(code, quietly=False, inline=True, echo=self.echo)
         self.shell.execution_count += 1
 
         return {'status': 'ok',

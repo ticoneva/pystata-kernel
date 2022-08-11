@@ -23,8 +23,8 @@ installer cannot find any Stata installation.
 
 The location of the configuration file is:
 
-- `[prefix]/etc/pykernel-stata.conf` if `--sys-prefix` or `--prefix` is specified.
--  `~/.pykernel-stata.conf` otherwise.
+- `[prefix]/etc/pystata-kernel.conf` if `--sys-prefix` or `--prefix` is specified.
+-  `~/.pystata-kernel.conf` otherwise.
 
 If a configuration file exists in both locations, the user version takes precedent. 
 
@@ -44,6 +44,9 @@ The following settings are permitted inside the configuration file:
     Default is 'be'.
 - `graph_format`: Graph format. Acceptable values are 'png', 'pdf', 'svg' and 'pystata'.
     Specify the last option if you want to use `pystata`'s setting. Default is 'png'. 
+- `echo`: If set to 'True', the kernel will echo the command while running a cell with only
+    a single command. This setting has no effect on cells containing multiple commands.
+    Default is 'False'.
 
 Settings must be under the title `[pystata-kernel]`. Example:
 

@@ -12,7 +12,11 @@ def get_config():
     global_config_path = Path(os.path.join(sys.prefix,'etc','pystata-kernel.conf'))
     user_config_path = Path('~/.pystata-kernel.conf').expanduser()
 
-    env = {'stata_dir': None, 'edition': None, 'graph_format': 'png'}
+    env = {'stata_dir': None, 
+            'edition': None, 
+            'graph_format': 'png',
+            'echo': 'False'
+            }
 
     for cpath in (global_config_path,user_config_path):
         try:
