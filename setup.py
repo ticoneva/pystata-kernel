@@ -5,7 +5,7 @@ with open('README.rst') as f:
 
 setup(
     name='pystata-kernel',
-    version='0.1.20',
+    version='0.1.21',
     packages=['pystata-kernel'],
     package_data={'pystata-kernel': ['logo-64x64.png']},
     description='A simple Jupyter kernel for Stata based on pystata',
@@ -14,7 +14,7 @@ setup(
     author_email='ticoneva@gmail.com',
     url='https://github.com/ticoneva/pystata-kernel',
     install_requires=[
-        'jupyter-client', 'ipython', 'ipykernel','stata-setup'
+        'jupyter-client', 'ipython', 'ipykernel','packaging'
     ],
     include_package_data=True,
     classifiers=[
