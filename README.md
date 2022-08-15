@@ -44,9 +44,12 @@ The following settings are permitted inside the configuration file:
     Default is 'be'.
 - `graph_format`: Graph format. Acceptable values are 'png', 'pdf', 'svg' and 'pystata'.
     Specify the last option if you want to use `pystata`'s setting. Default is 'png'. 
-- `echo`: If set to 'True', the kernel will echo the command while running a cell with only
-    a single command. This setting has no effect on cells containing multiple commands.
+- `echo`: controls the echo of commands:
+    - 'True': the kernel will echo all commands. 
+    - 'False': the kernel will not echo single commands. 
+    - 'None': the kernel will not echo any command.
     Default is 'False'.
+- `splash`: controls display of the splash message during Stata startup. Default is 'True'.
 
 Settings must be under the title `[pystata-kernel]`. Example:
 
@@ -56,6 +59,7 @@ stata_dir = /opt/stata
 edition = mp
 graph_format = svg
 echo = True
+splash = False
 ```
 
 ### Default Graph Format

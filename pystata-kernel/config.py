@@ -15,7 +15,8 @@ def get_config():
     env = {'stata_dir': None, 
             'edition': None, 
             'graph_format': 'png',
-            'echo': 'False'
+            'echo': 'False',
+            'splash': 'True'
             }
 
     for cpath in (global_config_path,user_config_path):

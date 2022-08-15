@@ -5,7 +5,7 @@ with open('README.rst') as f:
 
 setup(
     name='pystata-kernel',
-    version='0.1.18',
+    version='0.1.19',
     packages=['pystata-kernel'],
     package_data={'pystata-kernel': ['logo-64x64.png']},
     description='A simple Jupyter kernel for Stata based on pystata',

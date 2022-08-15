@@ -55,7 +55,9 @@ def win_find_path():
 
 
 def mac_find_path():
-    """Attempt to find Stata path on macOS when not on user's PATH
+    """
+    Attempt to find Stata path on macOS when not on user's PATH.
+    Modified from stata_kernel's original to only location "Applications/Stata". 
 
     Returns:
         (str): Path to Stata. Empty string if not found.
@@ -63,28 +65,5 @@ def mac_find_path():
     path = Path('/Applications/Stata')
     if not path.exists():
         return ''
-
-    dirs = [
-        x for x in path.iterdir() if re.search(r'Stata(SE|MP)?\.app', x.name)]
-    if not dirs:
-        return ''
-
-    if len(dirs) > 1:
-        for ext in ['MP.app', 'SE.app', 'IC.app', '.app']:
-            name = [x for x in dirs if x.name.endswith(ext)]
-            if name:
-                dirs = name
-                break
-
-    path = dirs[0] / 'Contents' / 'MacOS'
-    if not path.exists():
-        return ''
-
-    binaries = [x for x in path.iterdir()]
-    for pref in ['stata-mp', 'stata-se', 'stata', 'StataIC']:
-        name = [x for x in binaries if x.name == pref]
-        if name:
-            binaries = name
-            break
-
-    return str(binaries[0])
+    else:
+        return str(path)
