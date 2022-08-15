@@ -56,6 +56,7 @@ def install_conf(conf_file,gen_file=False):
     edition = {}
     graph_format = png
     echo = False
+    splash = True
     """.format(stata_dir,stata_ed))
 
     if gen_file:
