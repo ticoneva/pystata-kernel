@@ -9,6 +9,7 @@ from ipykernel.ipkernel import IPythonKernel
 from .config import get_config
 import os
 import sys
+from packaging import version
 
 class PyStataKernel(IPythonKernel):
     implementation = 'pystata-kernel'
@@ -41,8 +42,12 @@ class PyStataKernel(IPythonKernel):
             raise OSError(path + " is not Stata's installation path")
 
         sys.path.append(os.path.join(path, 'utilities'))
-        from pystata import config
-        config.init(edition,splash=splash)
+        import pystata
+        if version.parse(pystata.__version__) >= version.parse("0.1.1"):
+            # Splash message control is a new feature of pystata-0.1.1
+            pystata.config.init(edition,splash=splash)
+        else:
+            pystata.config.init(edition)
 
     def do_execute(self, code, silent, store_history=True, user_expressions=None,
                    allow_stdin=False):
