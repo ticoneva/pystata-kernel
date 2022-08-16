@@ -47,7 +47,6 @@ The following settings are permitted inside the configuration file:
 - `echo`: controls the echo of commands:
     - 'True': the kernel will echo all commands. 
     - 'False': the kernel will not echo single commands. 
-    - 'None': the kernel will not echo any command.
     Default is 'False'.
 - `splash`: controls display of the splash message during Stata startup. Default is 'True'.
 
