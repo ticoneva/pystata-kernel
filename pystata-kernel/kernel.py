@@ -30,6 +30,7 @@ class PyStataKernel(IPythonKernel):
         self.shell.execution_count = 0
         self.echo = False
         self.suppress = False
+        self.magic_handler = None
 
     def launch_stata(self, path, edition, splash=True):
         """
@@ -58,15 +59,16 @@ class PyStataKernel(IPythonKernel):
             self.launch_stata(env['stata_dir'],env['edition'],
                     False if env['splash']=='False' else True)
 
-            # pystata must be loaded after stata_setup
-            from pystata.config import set_graph_format 
+            import pystata                    
 
             # Set graph format
             if env['graph_format'] == 'pystata':
                 pass
             else:
+                from pystata.config import set_graph_format
                 set_graph_format(env['graph_format'])
 
+            # Echo options
             if env['echo'] not in ('True','False','None'):
                 raise OSError("'" + env['echo'] + "' is not an acceptable value for 'echo'.")
             else:
@@ -75,14 +77,21 @@ class PyStataKernel(IPythonKernel):
                 elif env['echo'] == 'True':
                     self.echo = True
 
+            # Magics
+            from .magics import StataMagics
+            self.magic_handler = StataMagics()
+
             self.stata_ready = True
-        
-        # Execute Stata code
-        from pystata.stata import run
-        
-        if self.suppress == True:        
-            code = "noisily: " + code.replace("\n","\nnoisily: ") 
-        run(code, quietly=self.suppress, inline=True, echo=self.echo)
+              
+        if code.startswith('%'):
+            pass
+            # Magic 
+            self.magic_handler.magic(code,self)
+        else:
+            # Execute Stata code 
+            from pystata.stata import run
+            run(code, quietly=self.suppress, inline=True, echo=self.echo)
+
         self.shell.execution_count += 1
 
         return {'status': 'ok',
