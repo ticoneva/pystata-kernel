@@ -82,13 +82,10 @@ class PyStataKernel(IPythonKernel):
             self.magic_handler = StataMagics()
 
             self.stata_ready = True
-              
-        if code.startswith('%'):
-            pass
-            # Magic 
-            self.magic_handler.magic(code,self)
-        else:
-            # Execute Stata code 
+
+        code = self.magic_handler.magic(code,self)              
+        if code != '':
+            # Execute Stata code after magics
             from pystata.stata import run
             run(code, quietly=self.suppress, inline=True, echo=self.echo)
 

@@ -72,3 +72,18 @@ Both `pystata` and `stata_kernel` default to the SVG image format.
 
 These issues make the SVG format unsuitable for use in a pedagogical setting, 
 which is my primary use of a Jupyter kernel for Stata. 
+
+### Magics (Experimental)
+
+Magics are commands that only work in `pystata-kernel` and are not part of 
+Stata's syntax. 
+Magics normally starts with `%`, but this would result in errors when the notebook
+is exported and run as a Stata script. As an alternative, you can use prefix the 
+magic name with `*%`, which will simply be treated by Stata as a single-line comment.
+
+`pystata` currently supports the following magics:
+
+| Magic | Description | Full Syntax |
+| :-- | :-- | :-- |
+| `*%browse` | View dataset | `*%browse [-h] [N] [varlist] [if]` |
+| `*%help` | Display a help file in rich text| `%help [-h] command_or_topic_name` |
