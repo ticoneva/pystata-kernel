@@ -77,8 +77,8 @@ which is my primary use of a Jupyter kernel for Stata.
 
 Magics are commands that only work in `pystata-kernel` and are not part of 
 Stata's syntax. 
-Magics normally starts with `%`, but this would result in errors when the notebook
-is exported and run as a Stata script. As an alternative, you can use prefix the 
+Magics normally starts with `%`, but this will cause errors when the notebook
+is exported and run as a Stata script. As an alternative, you can prefix the 
 magic name with `*%`, which will simply be treated by Stata as a single-line comment.
 
 `pystata` currently supports the following magics:
