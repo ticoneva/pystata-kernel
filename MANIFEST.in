@@ -1,2 +1,3 @@
 include README.md
 include pystata-kernel/logo-64x64.png
+include pystata-kernel/css/*
