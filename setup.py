@@ -14,7 +14,7 @@ setup(
     author_email='ticoneva@gmail.com',
     url='https://github.com/ticoneva/pystata-kernel',
     install_requires=[
-        'jupyter-client', 'ipython', 'ipykernel','packaging'
+        'jupyter-client', 'ipython', 'ipykernel','packaging', 'pandas'
     ],
     include_package_data=True,
     classifiers=[
