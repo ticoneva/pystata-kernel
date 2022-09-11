@@ -9,6 +9,7 @@ from pkg_resources import resource_filename
 
 import pystata
 import random
+import numpy as np
 
 def print_kernel(msg, kernel):
     msg = re.sub(r'$', r'\r\n', msg, flags=re.MULTILINE)
@@ -91,7 +92,8 @@ class StataMagics():
         try:
             df = pystata.stata.pdataframe_from_data(obs=range(0,N),
                                                     var=vars,
-                                                    selectvar=sel_var)
+                                                    selectvar=sel_var,
+                                                    missingval=np.NaN)
             if sel_var != None:
                 df = df.drop([sel_var],axis=1)
             html = df.to_html(na_rep='.', notebook=True)
