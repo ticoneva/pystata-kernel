@@ -14,7 +14,13 @@ setup(
     author_email='ticoneva@gmail.com',
     url='https://github.com/ticoneva/pystata-kernel',
     install_requires=[
-        'jupyter-client', 'ipython', 'ipykernel','packaging', 'pandas', 'beautifulsoup4'
+        'jupyter-client', 
+        'ipython', 
+        'ipykernel',
+        'packaging', 
+        'pandas', 
+        'numpy',
+        'beautifulsoup4'
     ],
     include_package_data=True,
     classifiers=[
