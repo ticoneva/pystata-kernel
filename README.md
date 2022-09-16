@@ -85,5 +85,5 @@ magic name with `*%`, which will simply be treated by Stata as a single-line com
 
 | Magic | Description | Full Syntax |
 | :-- | :-- | :-- |
-| `*%browse` | View dataset | `*%browse [-h] [N] [varlist] [if]` |
+| `*%browse` | View dataset | `*%browse [-h] [N] [varlist] [if] [in]` |
 | `*%help` | Display a help file in rich text| `*%help [-h] command_or_topic_name` |

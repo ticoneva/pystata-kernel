@@ -8,6 +8,7 @@ from argparse import ArgumentParser, SUPPRESS
 from pkg_resources import resource_filename
 
 import pystata
+import sfi
 import random
 import numpy as np
 
@@ -18,12 +19,32 @@ def print_kernel(msg, kernel):
     kernel.send_response(kernel.iopub_socket, 'stream', stream_content)
 
 def count():
-    pystata.stata.run("count",quietly=True)
-    r_dict = pystata.stata.get_return()
-    return int(r_dict['r(N)'])
+    #pystata.stata.run("count",quietly=True)
+    #r_dict = pystata.stata.get_return()
+    #return int(r_dict['r(N)'])
+    return sfi.Data.getObsTotal()
+
+class SelVar():
+    """
+    Class for generating selection var in Stata
+    TO DO: Keep track of names being used
+    """
+    def __init__(self,condition):
+        condition = condition.replace('if ','').strip()
+        if condition == '':
+            self.varname = None
+        else:
+            self.varname = "pystataTmp_" + str(random.randrange(1000,9999))      
+            cmd = f"gen {self.varname} = cond({condition},1,0)"
+            pystata.stata.run(cmd, quietly=True)        
+        
+    def clear(self):
+        if self.varname != None:
+            pystata.stata.run(f"capture drop {self.varname}", quietly=True)            
+
 
 def genSelVar(condition):
-    condition = condition.replace('if ','').strip()
+    condition = condition.replace(' if ','').strip()
     # TODO: create a tmp var class to keep track of things
     varname = "pystataTmp_" + str(random.randrange(1000,9999))
     
@@ -33,12 +54,27 @@ def genSelVar(condition):
 
     return varname
 
+def InVar(code):
+    """
+    Return in-statement range
+    """    
+    code = code.replace(' in ','').strip()
+    slash_pos = code.find('/')
+    if slash_pos == -1:
+        return (None, None)
+    start = code[:slash_pos]
+    end = code[slash_pos+1:]
+    if start.strip() == 'f': start = 1
+    if end.strip() == 'l': end = count()
+    return (int(start)-1, int(end))
+
 class StataMagics():
     html_base = "https://www.stata.com"
     html_help = urllib.parse.urljoin(html_base, "help.cgi?{}")
 
     magic_regex = re.compile(
-        r'\A(%|\*%)(?P<magic>.+?)(?P<code>\s+.*)?\Z', flags=re.DOTALL + re.MULTILINE)
+        #r'\A(%|\*%)(?P<magic>.+?)(?P<code>\s+.*)?\Z', flags=re.DOTALL + re.MULTILINE)
+        r'\A(%|\*%)(?P<magic>.+?)(?P<code>\s+(?!if\s)(?!in\s).+?)?(?P<if>\sif\s+.+?)?(?P<in>\s+in\s+.+?)?\Z', flags=re.DOTALL + re.MULTILINE)
 
     # Format: magic_name: help_content
     available_magics = {
@@ -52,50 +88,57 @@ class StataMagics():
     def magic(self, code, kernel):
         match = self.magic_regex.match(code.strip())
         if match:
-            name, code = match.groupdict().values()
-            code = '' if code is None else code.strip()
+            v = match.groupdict()
+            for k in v:
+                v[k] = v[k] if isinstance(v[k],str) else ''                
+
+            name = v['magic']
+            v['code'] = v['code'].strip()
+
             if name in self.available_magics:
-                if code.find('-h') >= 0:
+                if v['code'].find('-h') >= 0:
                     print_kernel(self.available_magics[name].format(name), kernel)
                     code = ''
                 else:
-                    code = getattr(self, "magic_" + name)(code, kernel)
+                    code = getattr(self, "magic_" + name)(v, kernel)
             else:
                 print_kernel("Unknown magic %{0}.".format(name), kernel)
     
         return code        
 
-    def magic_browse(self,code,kernel):
+    def magic_browse(self,args,kernel):
         N_max = 200
         vars = None
-        sel_var = None
 
-        if_start = code.find('if ')
-        if if_start >= 0:
-            # If statement
-            sel_var = genSelVar(code[if_start:])
-            code = code[:if_start]
+        # If and in statements
+        sel_var = SelVar(args['if'])
+        start,end = InVar(args['in'])
             
-        args = [c.strip() for c in code.split(' ') if c]
+        vargs = [c.strip() for c in args['code'].split(' ') if c]
 
-        if len(args) >= 1:
-            if args[0].isnumeric():
+        if len(vargs) >= 1:
+            if vargs[0].isnumeric():
                 # 1st argument is obs count
-                N_max = int(args[0])
-                del args[0]    
+                N_max = int(vargs[0])
+                del vargs[0]    
 
-        if len(args) >= 1:
-            vars = args
+        # Specified variables?
+        if len(vargs) >= 1:
+            vars = vargs
 
-        N = min(count(),N_max)
+        # Obs range
+        if start != None and end != None:
+            obs_range = range(start,end)
+        else:
+            obs_range = range(0,min(count(),N_max))
 
         try:
-            df = pystata.stata.pdataframe_from_data(obs=range(0,N),
+            df = pystata.stata.pdataframe_from_data(obs=obs_range,
                                                     var=vars,
-                                                    selectvar=sel_var,
-                                                    missingval=np.NaN)
-            if sel_var != None:
-                df = df.drop([sel_var],axis=1)
+                                                    selectvar=sel_var.varname,
+                                                    missingval='')
+            if vars == None and sel_var.varname != None:
+                df = df.drop([sel_var.varname],axis=1)
             html = df.to_html(na_rep='.', notebook=True)
 
             content = {
@@ -110,11 +153,15 @@ class StataMagics():
         if sel_var != None:
             # Drop selection var in Stata. We put this outside of try to ensure 
             # the temp variable gets deleted even when there is an error.
-            pystata.stata.run(f"capture drop {sel_var}", quietly=True)            
+            #pystata.stata.run(f"capture drop {sel_var}", quietly=True)            
+            sel_var.clear()
 
         return ''
 
-    def magic_help(self,code,kernel):
+    def magic_help(self,args,kernel):
+
+        code = args['code']
+
         try:
             reply = urllib.request.urlopen(self.html_help.format(code))
             html = reply.read().decode("utf-8")
