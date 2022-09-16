@@ -73,8 +73,7 @@ class StataMagics():
     html_help = urllib.parse.urljoin(html_base, "help.cgi?{}")
 
     magic_regex = re.compile(
-        #r'\A(%|\*%)(?P<magic>.+?)(?P<code>\s+.*)?\Z', flags=re.DOTALL + re.MULTILINE)
-        r'\A(%|\*%)(?P<magic>.+?)(?P<code>\s+(?!if\s)(?!in\s).+?)?(?P<if>\sif\s+.+?)?(?P<in>\s+in\s+.+?)?\Z', flags=re.DOTALL + re.MULTILINE)
+        r'\A(%|\*%)(?P<magic>.+?)(?P<code>\s+(?!if\s)(?!\sif)(?!in\s)(?!\sin).+?)?(?P<if>\s+if\s+.+?)?(?P<in>\s+in\s+.+?)?\Z', flags=re.DOTALL + re.MULTILINE)
 
     # Format: magic_name: help_content
     available_magics = {
