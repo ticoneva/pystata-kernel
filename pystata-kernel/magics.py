@@ -6,6 +6,7 @@ from textwrap import dedent
 from bs4 import BeautifulSoup as bs
 from argparse import ArgumentParser, SUPPRESS
 from pkg_resources import resource_filename
+from .helpers import better_pdataframe_from_data
 
 import pystata
 import sfi
@@ -54,35 +55,6 @@ def InVar(code):
     if start.strip() == 'f': start = 1
     if end.strip() == 'l': end = count()
     return (int(start)-1, int(end))
-
-def better_pdataframe_from_data(var=None, obs=None, selectvar=None, valuelabel=False, missingval=np.NaN):
-    pystata.config.check_initialized()
-
-    return better_dataframe_from_stata(None, var, obs, selectvar, valuelabel, missingval)
-
-def better_pdataframe_from_frame(stfr, var=None, obs=None, selectvar=None, valuelabel=False, missingval=np.NaN):
-    pystata.config.check_initialized()
-
-    return better_dataframe_from_stata(stfr, var, obs, selectvar, valuelabel, missingval)
-
-def better_dataframe_from_stata(stfr, var, obs, selectvar, valuelabel, missingval):
-    hdl = sfi.Data if stfr is None else sfi.Frame.connect(stfr)
-    
-    if hdl.getObsTotal() <= 0:
-        return None
-
-    # TODO: decide whether to use int, long, or float based on number of obs to be indexed
-    pystata.stata.run("""tempvar indexvar
-                         generate long `indexvar' = _n""", quietly=True)
-    idx_var = sfi.Macro.getLocal('indexvar')
-    
-    data = hdl.getAsDict(var, obs, selectvar, valuelabel, missingval)
-
-    # TODO: splice idx_var and var to this can be done in one call
-    idx = hdl.getAsDict(idx_var, obs, selectvar, valuelabel, missingval).pop(idx_var)
-
-    return pd.DataFrame(data=data, index=idx).convert_dtypes()
-
 
 class StataMagics():
     html_base = "https://www.stata.com"
