@@ -125,7 +125,7 @@ class StataMagics():
                                                     missingval='')
             if vars == None and sel_var.varname != None:
                 df = df.drop([sel_var.varname],axis=1)
-            html = df.to_html(na_rep='.', notebook=True)
+            html = df.to_html(notebook=True)
 
             content = {
                     'data': {
