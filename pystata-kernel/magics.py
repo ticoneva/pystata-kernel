@@ -37,6 +37,10 @@ class SelVar():
             pystata.stata.run(cmd, quietly=True)      
             self.varname = sfi.Macro.getLocal("__selectionVar")  
 
+    def clear(self):
+        if self.varname != None:
+            pystata.stata.run(f"capture drop {self.varname}", quietly=True)     
+
 def InVar(code):
     """
     Return in-statement range
@@ -131,6 +135,11 @@ class StataMagics():
         except Exception as e:
             msg = "Failed to browse data.\r\n{0}"
             print_kernel(msg.format(e), kernel)
+
+        if sel_var != None:
+            # Drop selection var in Stata. We put this outside of try to ensure 
+            # the temp variable gets deleted even when there is an error.
+            sel_var.clear()
 
         return ''
 
