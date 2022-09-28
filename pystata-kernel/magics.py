@@ -27,32 +27,19 @@ def count():
 class SelVar():
     """
     Class for generating selection var in Stata
-    TO DO: Keep track of names being used
     """
     def __init__(self,condition):
-        condition = condition.replace('if ','').strip()
+        condition = condition.replace('if ','',1).strip()
         if condition == '':
             self.varname = None
         else:
-            self.varname = "pystataTmp_" + str(random.randrange(1000,9999))      
-            cmd = f"gen {self.varname} = cond({condition},1,0)"
-            pystata.stata.run(cmd, quietly=True)        
-        
+            cmd = f"tempvar __selectionVar\ngenerate `__selectionVar' = cond({condition},1,0)"
+            pystata.stata.run(cmd, quietly=True)      
+            self.varname = sfi.Macro.getLocal("__selectionVar")  
+
     def clear(self):
         if self.varname != None:
-            pystata.stata.run(f"capture drop {self.varname}", quietly=True)            
-
-
-def genSelVar(condition):
-    condition = condition.replace(' if ','').strip()
-    # TODO: create a tmp var class to keep track of things
-    varname = "pystataTmp_" + str(random.randrange(1000,9999))
-    
-    # Gen selection var in Stata
-    cmd = f"gen {varname} = cond({condition},1,0)"
-    pystata.stata.run(cmd, quietly=True)
-
-    return varname
+            pystata.stata.run(f"capture drop {self.varname}", quietly=True)     
 
 def InVar(code):
     """
@@ -167,7 +154,7 @@ class StataMagics():
                                                     missingval=np.NaN)
             if vars == None and sel_var.varname != None:
                 df = df.drop([sel_var.varname],axis=1)
-            html = df.to_html(na_rep='.', notebook=True)
+            html = df.to_html(notebook=True)
 
             content = {
                     'data': {
@@ -181,7 +168,6 @@ class StataMagics():
         if sel_var != None:
             # Drop selection var in Stata. We put this outside of try to ensure 
             # the temp variable gets deleted even when there is an error.
-            #pystata.stata.run(f"capture drop {sel_var}", quietly=True)            
             sel_var.clear()
 
         return ''
