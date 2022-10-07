@@ -7,6 +7,7 @@ from bs4 import BeautifulSoup as bs
 from argparse import ArgumentParser, SUPPRESS
 from pkg_resources import resource_filename
 from .helpers import better_pdataframe_from_data
+from .config import get_config
 
 import pystata
 import sfi
@@ -94,6 +95,7 @@ class StataMagics():
         return code        
 
     def magic_browse(self,args,kernel):
+        env = get_config()
         N_max = 200
         vars = None
 
@@ -126,6 +128,10 @@ class StataMagics():
                                                     missingval=np.NaN)
             if vars == None and sel_var.varname != None:
                 df = df.drop([sel_var.varname],axis=1)
+            
+            if env['missing'] is not None:
+                df = df.astype('string').fillna(env['missing'])
+                
             html = df.to_html(notebook=True)
 
             content = {
