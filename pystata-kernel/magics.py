@@ -120,8 +120,10 @@ class StataMagics():
             obs_range = range(0,min(count(),N_max))
 
         # Missing value display format
-        missingval = env['missing'] if env['missing'] is not None else np.NaN        
-
+        missingval = np.NaN
+        if env['missing'] is not None and env['missing'] != 'pandas':
+            missingval = env['missing']  
+        
         try:
             df = better_pdataframe_from_data(obs=obs_range,
                                                     var=vars,
