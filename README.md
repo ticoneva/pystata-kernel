@@ -49,7 +49,7 @@ The following settings are permitted inside the configuration file:
     - 'False': the kernel will not echo single commands. 
     Default is 'False'.
 - `splash`: controls display of the splash message during Stata startup. Default is 'True'.
-- `missing`: What should be displayed in the output of the `%browse` magic for a missing value. Default is '.', following Stata. To defer to pandas' format for `NA`s, specify `None`.
+- `missing`: What should be displayed in the output of the `*%browse` magic for a missing value. Default is `'.'`, following Stata. To defer to pandas' format for `NA`, specify `None`.
 
 Settings must be under the title `[pystata-kernel]`. Example:
 
