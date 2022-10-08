@@ -97,8 +97,7 @@ class StataMagics():
     def magic_browse(self,args,kernel):
         env = get_config()
         N_max = 200
-        vars = None
-
+        
         # If and in statements
         sel_var = SelVar(args['if'])
         start,end = InVar(args['in'])
@@ -112,8 +111,7 @@ class StataMagics():
                 del vargs[0]    
 
         # Specified variables?
-        if len(vargs) >= 1:
-            vars = vargs
+        vars = vargs if len(vargs) >= 1 else None
 
         # Obs range
         if start != None and end != None:
@@ -121,16 +119,16 @@ class StataMagics():
         else:
             obs_range = range(0,min(count(),N_max))
 
+        # Missing value display format
+        missingval = env['missing'] if env['missing'] is not None else np.NaN        
+
         try:
             df = better_pdataframe_from_data(obs=obs_range,
                                                     var=vars,
                                                     selectvar=sel_var.varname,
-                                                    missingval=np.NaN)
+                                                    missingval=missingval)
             if vars == None and sel_var.varname != None:
                 df = df.drop([sel_var.varname],axis=1)
-            
-            if env['missing'] is not None:
-                df = df.astype('string').fillna(env['missing'])
                 
             html = df.to_html(notebook=True)
 
