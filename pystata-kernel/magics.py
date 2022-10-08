@@ -66,8 +66,9 @@ class StataMagics():
 
     # Format: magic_name: help_content
     available_magics = {
-        'browse': '{} [-h] [N] [varlist] [if]',
-        'help': '{} [-h] command_or_topic_name'
+        'browse': '{} [-h] [N] [varlist] [if] [in]',
+        'help': '{} [-h] command_or_topic_name',
+        'quietly': ''
     }
     
     csshelp_default = resource_filename(
@@ -95,6 +96,9 @@ class StataMagics():
         return code        
 
     def magic_browse(self,args,kernel):
+        """
+        Display data in a nicely-formatted table.
+        """
         env = get_config()
         N_max = 200
         
@@ -151,6 +155,9 @@ class StataMagics():
         return ''
 
     def magic_help(self,args,kernel):
+        """
+        Show help file from stata.com.
+        """
 
         code = args['code']
 
