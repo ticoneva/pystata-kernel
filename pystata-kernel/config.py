@@ -16,7 +16,8 @@ def get_config():
             'edition': None, 
             'graph_format': 'png',
             'echo': 'False',
-            'splash': 'True'
+            'splash': 'True',
+            'missing': '.'
             }
 
     for cpath in (global_config_path,user_config_path):
