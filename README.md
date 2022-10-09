@@ -84,7 +84,7 @@ Magics normally start with `%`, but this will cause errors when the notebook
 is exported and run as a Stata script. As an alternative, you can prefix the 
 magic name with `*%`, which will simply be treated by Stata as a single-line comment.
 
-`pystata` currently supports the following magics:
+`pystata-kernel` currently supports the following magics:
 
 | Magic | Description | Full Syntax |
 | :-- | :-- | :-- |
