@@ -89,5 +89,5 @@ magic name with `*%`, which will simply be treated by Stata as a single-line com
 | :-- | :-- | :-- |
 | `*%browse` | View dataset | `*%browse [-h] [N] [varlist] [if] [in]` |
 | `*%help` | Display a help file in rich text| `*%help [-h] command_or_topic_name` |
-| `*%noecho` | Supress echo for current cell | `*%noecho` |
-| `*%quietly` | Supress all output for current cell | `*%quietly` |
+| `*%noecho` | Supress echo in current cell | `*%noecho` |
+| `*%quietly` | Supress all output from current cell | `*%quietly` |
