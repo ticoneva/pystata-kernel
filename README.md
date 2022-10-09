@@ -48,6 +48,7 @@ The following settings are permitted inside the configuration file:
     - 'True': the kernel will echo all commands. 
     - 'False': the kernel will not echo single commands.
     - 'None': the kernel will not echo any command. 
+    
     Default is 'False'.
 - `splash`: controls display of the splash message during Stata startup. Default is 'True'.
 - `missing`: What should be displayed in the output of the `*%browse` magic for a missing value. Default is '.', following Stata. To defer to pandas' format for `NA`, specify 'pandas'.
