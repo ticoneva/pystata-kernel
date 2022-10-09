@@ -1,6 +1,6 @@
 '''
 pystata-kernel
-Version: 0.2.4
+Version: 0.2.5
 A simple Jupyter kernel based on pystata.
 Requires Stata 17 and stata_setup.
 '''
@@ -13,7 +13,7 @@ from packaging import version
 
 class PyStataKernel(IPythonKernel):
     implementation = 'pystata-kernel'
-    implementation_version = '0.2.4'
+    implementation_version = '0.2.5'
     language = 'stata'
     language_version = '17'
     language_info = {
@@ -29,8 +29,10 @@ class PyStataKernel(IPythonKernel):
         self.stata_ready = False
         self.shell.execution_count = 0
         self.echo = False
-        self.suppress = False
+        self.noecho = False
+        self.quietly = False
         self.magic_handler = None
+        self.env = None
 
     def launch_stata(self, path, edition, splash=True):
         """
@@ -55,11 +57,15 @@ class PyStataKernel(IPythonKernel):
 
         # Launch Stata if it has not been launched yet
         if not self.stata_ready:
-            env = get_config()
+            env = self.env = get_config()
             self.launch_stata(env['stata_dir'],env['edition'],
                     False if env['splash']=='False' else True)
 
-            import pystata                    
+            # This can only be imported after locating Stata
+            import pystata
+            
+            if env['echo'] not in ('True','False','None'):
+                raise OSError("'" + env['echo'] + "' is not an acceptable value for 'echo'.")
 
             # Set graph format
             if env['graph_format'] == 'pystata':
@@ -68,26 +74,36 @@ class PyStataKernel(IPythonKernel):
                 from pystata.config import set_graph_format
                 set_graph_format(env['graph_format'])
 
-            # Echo options
-            if env['echo'] not in ('True','False','None'):
-                raise OSError("'" + env['echo'] + "' is not an acceptable value for 'echo'.")
-            else:
-                if env['echo'] == 'None':
-                    self.suppress = True
-                elif env['echo'] == 'True':
-                    self.echo = True
-
             # Magics
             from .magics import StataMagics
             self.magic_handler = StataMagics()
 
             self.stata_ready = True
 
+        # Read settings from env dict every time so that these can be modified by magics 
+        # for each cell.
+        if self.env['echo'] == 'None':
+            self.noecho = True
+            self.echo = False
+        elif self.env['echo'] == 'True':
+            self.noecho = False
+            self.echo = True
+        else:
+            self.noecho = False
+            self.echo = False
+        self.quietly = False
+        
+        # Process magics
         code = self.magic_handler.magic(code,self)              
         if code != '':
+            # Supress echo?
+            if self.noecho:
+                from .helpers import clean_code  
+                code = clean_code(code,noisily=True)
+                self.quietly = True
             # Execute Stata code after magics
             from pystata.stata import run
-            run(code, quietly=self.suppress, inline=True, echo=self.echo)
+            run(code, quietly=self.quietly, inline=True, echo=self.echo)
 
         self.shell.execution_count += 1
 

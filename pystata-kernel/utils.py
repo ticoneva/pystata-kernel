@@ -1,3 +1,4 @@
+# Utility functions that does not require Stata running
 # From stata_kernel 1.12
 
 import os

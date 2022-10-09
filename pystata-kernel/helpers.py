@@ -1,7 +1,119 @@
+# Helper functions that requires Stata running or works on Stata code
+# but does not depend on the Jupyter kernel.
+
 import pandas as pd
 import numpy as np
 import pystata
 import sfi
+import re
+ 
+def count():
+    """
+    Count the number of observations
+    """
+    return sfi.Data.getObsTotal()
+
+def InVar(code):
+    """
+    Return in-statement range
+    """    
+    code = code.replace(' in ','').strip()
+    slash_pos = code.find('/')
+    if slash_pos == -1:
+        return (None, None)
+    start = code[:slash_pos]
+    end = code[slash_pos+1:]
+    if start.strip() == 'f': start = 1
+    if end.strip() == 'l': end = count()
+    return (int(start)-1, int(end))
+
+class SelVar():
+    """
+    Class for generating selection var in Stata
+    """
+    def __init__(self,condition):
+        condition = condition.replace('if ','',1).strip()
+        if condition == '':
+            self.varname = None
+        else:
+            cmd = f"tempvar __selectionVar\ngenerate `__selectionVar' = cond({condition},1,0)"
+            pystata.stata.run(cmd, quietly=True)      
+            self.varname = sfi.Macro.getLocal("__selectionVar")  
+
+    def clear(self):
+        if self.varname != None:
+            pystata.stata.run(f"capture drop {self.varname}", quietly=True)     
+
+# Regex for parse_code_if_in
+code_regex = re.compile(
+        r'\A(?P<code>(?!if\s)(?!\sif)(?!in\s)(?!\sin).+?)?(?P<if>\s*if\s+.+?)?(?P<in>\s*in\s.+?)?\Z', flags=re.DOTALL + re.MULTILINE)
+
+def parse_code_if_in(code):
+    """
+    Parse code into code if in
+    """
+    match = code_regex.match(code.strip())
+    if match:
+        args = match.groupdict()
+        for k in args:
+                args[k] = args[k] if isinstance(args[k],str) else ''   
+    else:
+        args = {'code':code,
+                'if':'',
+                'in':''}    
+
+    return args
+
+# Regex's for clean_code()
+# Detect delimiter
+delimit_regex = re.compile(r'#delimit( |\t)+(;|cr)', flags=re.DOTALL + re.MULTILINE)
+# Detect comments spanning multiple lines
+comment_regex = re.compile(r'((\/\/\/)(.)*(\n|\r)|(\/\*)(.|\s)*(\*\/))')
+# Detect left Whitespace
+left_regex = re.compile(r'\n +')
+# Detect Multiple whitespace
+multi_regex = re.compile(r' +')
+
+def clean_code(code, noisily=False):
+    """
+    Remove comments spanning multiple lines and replace custom delimiters
+    """
+    
+    def _replace_delimiter(code,delimiter=None):
+        # Recursively replace custom delimiter with newline
+        
+        split = delimit_regex.split(code.strip(),maxsplit=1)
+
+        if len(split) == 4:
+            before = split[0]
+            after = _replace_delimiter(split[3],split[2].strip())
+        else:
+            before = code
+            after = ''
+
+        if delimiter == ';':
+            before = before.replace('\r', '').replace('\n', '')
+            before = before.replace(delimiter,'\n')
+
+        return before + after
+
+    # Apply custom delimiter
+    code = _replace_delimiter(code)
+    
+    # Delete comments spanning multiple lines
+    code = comment_regex.sub(' ',code)
+    
+    # Delete whitespace at start of line
+    code = left_regex.sub('\n',code)
+    
+    # Replace multiple whitespace with one
+    code = multi_regex.sub(' ',code)
+
+    # Add 'noisely' to each newline
+    if noisily:
+        code = 'noisily ' + code.replace('\n','\nnoisily ') 
+    
+    return code
 
 def better_pdataframe_from_data(var=None, obs=None, selectvar=None, valuelabel=False, missingval=np.NaN):
     pystata.config.check_initialized()

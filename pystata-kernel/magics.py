@@ -6,7 +6,7 @@ from textwrap import dedent
 from bs4 import BeautifulSoup as bs
 from argparse import ArgumentParser, SUPPRESS
 from pkg_resources import resource_filename
-from .helpers import better_pdataframe_from_data
+from .helpers import *
 from .config import get_config
 
 import pystata
@@ -20,55 +20,23 @@ def print_kernel(msg, kernel):
     stream_content = {'text': msg, 'name': 'stdout'}
     kernel.send_response(kernel.iopub_socket, 'stream', stream_content)
 
-def count():
-    #pystata.stata.run("count",quietly=True)
-    #r_dict = pystata.stata.get_return()
-    #return int(r_dict['r(N)'])
-    return sfi.Data.getObsTotal()
-
-class SelVar():
-    """
-    Class for generating selection var in Stata
-    """
-    def __init__(self,condition):
-        condition = condition.replace('if ','',1).strip()
-        if condition == '':
-            self.varname = None
-        else:
-            cmd = f"tempvar __selectionVar\ngenerate `__selectionVar' = cond({condition},1,0)"
-            pystata.stata.run(cmd, quietly=True)      
-            self.varname = sfi.Macro.getLocal("__selectionVar")  
-
-    def clear(self):
-        if self.varname != None:
-            pystata.stata.run(f"capture drop {self.varname}", quietly=True)     
-
-def InVar(code):
-    """
-    Return in-statement range
-    """    
-    code = code.replace(' in ','').strip()
-    slash_pos = code.find('/')
-    if slash_pos == -1:
-        return (None, None)
-    start = code[:slash_pos]
-    end = code[slash_pos+1:]
-    if start.strip() == 'f': start = 1
-    if end.strip() == 'l': end = count()
-    return (int(start)-1, int(end))
-
 class StataMagics():
     html_base = "https://www.stata.com"
     html_help = urllib.parse.urljoin(html_base, "help.cgi?{}")
 
     magic_regex = re.compile(
-        r'\A(%|\*%)(?P<magic>.+?)(?P<code>\s+(?!if\s)(?!\sif)(?!in\s)(?!\sin).+?)?(?P<if>\s+if\s+.+?)?(?P<in>\s+in\s+.+?)?\Z', flags=re.DOTALL + re.MULTILINE)
+        r'\A(%|\*%)(?P<magic>.+?)(?P<code>\s+(.|\s)+?)?\Z', flags=re.DOTALL + re.MULTILINE)
 
+    # This is the original regex that splits into magic code if in
+    #magic_regex = re.compile(
+    #    r'\A(%|\*%)(?P<magic>.+?)(?P<code>\s+(?!if\s)(?!\sif)(?!in\s)(?!\sin).+?)?(?P<if>\s+if\s+.+?)?(?P<in>\s+in\s+.+?)?\Z', flags=re.DOTALL + re.MULTILINE)
+    
     # Format: magic_name: help_content
     available_magics = {
         'browse': '{} [-h] [N] [varlist] [if] [in]',
         'help': '{} [-h] command_or_topic_name',
-        'quietly': ''
+        'quietly': '',
+        'noecho': ''
     }
     
     csshelp_default = resource_filename(
@@ -81,26 +49,42 @@ class StataMagics():
             for k in v:
                 v[k] = v[k] if isinstance(v[k],str) else ''                
 
-            name = v['magic']
-            v['code'] = v['code'].strip()
+            name = v['magic'].strip()
+            code = v['code'].strip()
 
             if name in self.available_magics:
-                if v['code'].find('-h') >= 0:
+                if code.find('-h') >= 0:
                     print_kernel(self.available_magics[name].format(name), kernel)
                     code = ''
                 else:
-                    code = getattr(self, "magic_" + name)(v, kernel)
+                    code = getattr(self, "magic_" + name)(code, kernel)
             else:
                 print_kernel("Unknown magic %{0}.".format(name), kernel)
     
         return code        
 
-    def magic_browse(self,args,kernel):
+    def magic_quietly(self,code,kernel):
+        """
+        Supress all display for the current cell.
+        """
+        kernel.quietly = True
+        return code
+
+    def magic_noecho(self,code,kernel):
+        """
+        Supress echo for the current cell.
+        """
+        kernel.noecho = True
+        return code        
+        
+    def magic_browse(self,code,kernel):
         """
         Display data in a nicely-formatted table.
         """
-        env = get_config()
+        env = kernel.env
         N_max = 200
+
+        args = parse_code_if_in(code)
         
         # If and in statements
         sel_var = SelVar(args['if'])
@@ -124,9 +108,7 @@ class StataMagics():
             obs_range = range(0,min(count(),N_max))
 
         # Missing value display format
-        missingval = np.NaN
-        if env['missing'] is not None and env['missing'] != 'pandas':
-            missingval = env['missing']  
+        missingval = env['missing'] if env['missing'] != 'pandas' else np.NaN
         
         try:
             df = better_pdataframe_from_data(obs=obs_range,
