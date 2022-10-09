@@ -48,7 +48,7 @@ The following settings are permitted inside the configuration file:
     - 'True': the kernel will echo all commands. 
     - 'False': the kernel will not echo single commands.
     - 'None': the kernel will not echo any command. 
-    
+
     Default is 'False'.
 - `splash`: controls display of the splash message during Stata startup. Default is 'True'.
 - `missing`: What should be displayed in the output of the `*%browse` magic for a missing value. Default is '.', following Stata. To defer to pandas' format for `NA`, specify 'pandas'.
@@ -90,5 +90,5 @@ magic name with `*%`, which will simply be treated by Stata as a single-line com
 | :-- | :-- | :-- |
 | `*%browse` | View dataset | `*%browse [-h] [N] [varlist] [if] [in]` |
 | `*%help` | Display a help file in rich text| `*%help [-h] command_or_topic_name` |
-| `*%noecho` | Supress echo in current cell | `*%noecho` |
-| `*%quietly` | Supress all output from current cell | `*%quietly` |
+| `*%noecho` | Suppress echo in current cell | `*%noecho` |
+| `*%quietly` | Suppress all output from current cell | `*%quietly` |
