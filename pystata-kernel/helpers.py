@@ -13,6 +13,16 @@ def count():
     """
     return sfi.Data.getObsTotal()
 
+def resolve_macro(macro):
+    macro = macro.strip()
+    if macro.startswith("`") and macro.endswith("'"):
+        macro = sfi.Macro.getLocal(macro[1:-1])
+    elif macro.startswith("$_"):
+        macro = sfi.Macro.getLocal(macro[2:])
+    elif macro.startswith("$"):
+        macro = sfi.Macro.getGlobal(macro[1:])
+    return macro
+
 def InVar(code):
     """
     Return in-statement range
@@ -64,9 +74,12 @@ def parse_code_if_in(code):
 
     return args
 
-# Regex's for clean_code()
-# Detect delimiter
-delimit_regex = re.compile(r'#delimit( |\t)+(;|cr)', flags=re.DOTALL + re.MULTILINE)
+### Regex's for clean_code() ###
+# Detect delimiter. This would detect valid delimiters plus macros:
+# delimit_regex = re.compile(r'#delimit( |\t)+(;|cr|`.+\'|\$_.+|\$.+)')
+# but it's unnecessary, since Stata's #delimit x interprets any x other 
+# than 'cr' as switching the delimiter to ';'.
+delimit_regex = re.compile(r'#delimit(.*\s)')
 # Detect comments spanning multiple lines
 comment_regex = re.compile(r'((\/\/\/)(.)*(\n|\r)|(\/\*)(.|\s)*(\*\/))')
 # Detect left Whitespace
@@ -84,16 +97,16 @@ def clean_code(code, noisily=False):
         
         split = delimit_regex.split(code.strip(),maxsplit=1)
 
-        if len(split) == 4:
+        if len(split) == 3:
             before = split[0]
-            after = _replace_delimiter(split[3],split[2].strip())
+            after = _replace_delimiter(split[2],split[1].strip())
         else:
             before = code
             after = ''
-
-        if delimiter == ';':
+            
+        if delimiter != 'cr' and delimiter != None:
             before = before.replace('\r', '').replace('\n', '')
-            before = before.replace(delimiter,'\n')
+            before = before.replace(';','\n')
 
         return before + after
 
