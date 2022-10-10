@@ -76,7 +76,7 @@ Both `pystata` and `stata_kernel` default to the SVG image format.
 These issues make the SVG format unsuitable for use in a pedagogical setting, 
 which is my primary use of a Jupyter kernel for Stata. 
 
-### Magics (Experimental)
+### Magics
 
 Magics are commands that only work in `pystata-kernel` and are not part of 
 Stata's syntax. 
