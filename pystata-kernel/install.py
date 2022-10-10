@@ -14,7 +14,7 @@ from textwrap import dedent
 
 kernel_json = {
     "argv": [sys.executable, "-m", "pystata-kernel", "-f", "{connection_file}"],
-    "display_name": "Stata",
+    "display_name": "Stata (pystata-kernel)",
     "language": "stata",
 }
 
