@@ -110,6 +110,28 @@ def clean_code(code, noisily=False):
 
         return before + after
 
+    def _startswith_stata_abbrev(string, full_command, shortest_abbrev, with_space=True):
+        buffer = ' ' if with_space else ''
+        for j in range(len(shortest_abbrev), len(full_command)+1):
+            if string.startswith(full_command[0:j] + buffer):
+                return True
+        return False
+       
+    def _is_start_of_program_block(clean_code_line_stripped):
+        cs = clean_code_line_stripped
+        while (_startswith_stata_abbrev(cs, 'quietly', 'qui')
+               or cs.startswith('capture')
+               or _startswith_stata_abbrev(cs, 'noisily', 'n')):
+            cs = cs.split(None, maxsplit=1)[1]
+        _starts_program = (_startswith_stata_abbrev(cs, 'program', 'pr')
+                           and not (cs == 'program di'
+                                    or cs == 'program dir'
+                                    or cs.startswith('program drop ')
+                                    _startswith_stata_abbrev(cs, 'program list', 'program l'))
+        return (_starts_program
+                or (cs in ['mata', 'mata:'])
+                or (cs in ['python', 'python:']))
+       
     # Apply custom delimiter
     code = _replace_delimiter(code)
     
@@ -131,7 +153,7 @@ def clean_code(code, noisily=False):
             cs = c.strip()
 
             # Are we starting a program definition?
-            if  'program define' in cs:
+            if _is_start_of_program_block(cs):
                 in_program = True
 
             if not (cs.startswith('qui') 
@@ -150,7 +172,7 @@ def clean_code(code, noisily=False):
             co.append(c)
 
             # Are we ending a program definition?
-            if cs.startswith('end'):
+            if cs == 'end':
                 in_program = False
 
         code = '\n'.join(co)
