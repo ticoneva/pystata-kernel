@@ -81,7 +81,7 @@ def parse_code_if_in(code):
 # than 'cr' as switching the delimiter to ';'.
 delimit_regex = re.compile(r'#delimit(.*\s)')
 # Detect comments spanning multiple lines
-comment_regex = re.compile(r'((\/\/\/)(.)*(\n|\r)|(\/\*)(.|\s)*(\*\/))')
+comment_regex = re.compile(r'((\/\/\/)(.)*(\n|\r)|(\/\*)(.|\s)*?(\*\/))')
 # Detect left Whitespace
 left_regex = re.compile(r'\n +')
 # Detect Multiple whitespace
@@ -123,8 +123,24 @@ def clean_code(code, noisily=False):
     code = multi_regex.sub(' ',code)
 
     # Add 'noisely' to each newline
+    # Add 'noisely' to each newline
     if noisily:
-        code = 'noisily ' + code.replace('\n','\nnoisily ') 
+        cl = code.splitlines()
+        co = []
+        in_program = False
+        for c in cl:
+            cs = c.strip()
+            if  'program define' in cs:
+                in_program = True
+            elif cs.startswith('end'):
+                in_program = False
+            if not (cs.startswith('quietly') 
+                    or cs.startswith('noisily') 
+                    or cs.startswith('}')
+                    or in_program):
+                c = 'noisily ' + c
+            co.append(c)
+        code = '\n'.join(co)
     
     return code
 
