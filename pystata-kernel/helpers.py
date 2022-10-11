@@ -137,6 +137,7 @@ def clean_code(code, noisily=False):
             if not (cs.startswith('quietly') 
                     or cs.startswith('noisily') 
                     or cs.startswith('}')
+                    or cs.startswith('end')
                     or cs.startswith('forvalues')
                     or cs.startswith('foreach')
                     or cs.startswith('while')
