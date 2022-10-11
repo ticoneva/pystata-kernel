@@ -134,16 +134,16 @@ def clean_code(code, noisily=False):
             if  'program define' in cs:
                 in_program = True
 
-            if not (cs.startswith('quietly') 
-                    or cs.startswith('noisily') 
+            if not (cs.startswith('qui') 
+                    or cs.startswith('noisily')
                     or cs.startswith('}')
                     or cs.startswith('end')
-                    or cs.startswith('forvalues')
+                    or cs.startswith('forv')
                     or cs.startswith('foreach')
                     or cs.startswith('while')
                     or in_program):
                 c = 'noisily ' + c
-            elif (cs.startswith('forvalues')
+            elif (cs.startswith('forv')
                   or cs.startswith('foreach')
                   or cs.startswith('while')):
                 c = 'quietly ' + c
