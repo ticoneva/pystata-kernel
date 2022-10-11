@@ -130,17 +130,23 @@ def clean_code(code, noisily=False):
         in_program = False
         for c in cl:
             cs = c.strip()
+
+            # Are we starting a program definition?
+            if  'program define' in cs:
+                in_program = True
+
             if not (cs.startswith('quietly') 
                     or cs.startswith('noisily') 
                     or cs.startswith('}')
+                    or cs.startswith('forvalues')
+                    or cs.startswith('foreach')
+                    or cs.startswith('while')
                     or in_program):
                 c = 'noisily ' + c
             co.append(c)
 
-            # Are we in a program definition?
-            if  'program define' in cs:
-                in_program = True
-            elif cs.startswith('end'):
+            # Are we ending a program definition?
+            if cs.startswith('end'):
                 in_program = False
 
         code = '\n'.join(co)

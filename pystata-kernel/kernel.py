@@ -97,7 +97,7 @@ class PyStataKernel(IPythonKernel):
         code = self.magic_handler.magic(code,self)              
         if code != '':
             # Supress echo?
-            if self.noecho:
+            if self.noecho and not self.quietly:
                 from .helpers import clean_code  
                 code = clean_code(code,noisily=True)
                 self.quietly = True
