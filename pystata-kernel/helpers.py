@@ -127,7 +127,7 @@ def clean_code(code, noisily=False):
                            and not (cs == 'program di'
                                     or cs == 'program dir'
                                     or cs.startswith('program drop ')
-                                    _startswith_stata_abbrev(cs, 'program list', 'program l'))
+                                    _startswith_stata_abbrev(cs, 'program list', 'program l')))
         return (_starts_program
                 or (cs in ['mata', 'mata:'])
                 or (cs in ['python', 'python:']))
