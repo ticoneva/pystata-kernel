@@ -122,8 +122,7 @@ def clean_code(code, noisily=False):
     # Replace multiple whitespace with one
     code = multi_regex.sub(' ',code)
 
-    # Add 'noisely' to each newline
-    # Add 'noisely' to each newline
+    # Add 'noisily' to each newline
     if noisily:
         cl = code.splitlines()
         co = []
@@ -143,6 +142,10 @@ def clean_code(code, noisily=False):
                     or cs.startswith('while')
                     or in_program):
                 c = 'noisily ' + c
+            elif (cs.startswith('forvalues')
+                  or cs.startswith('foreach')
+                  or cs.startswith('while')):
+                c = 'quietly ' + c
             co.append(c)
 
             # Are we ending a program definition?
