@@ -136,12 +136,10 @@ class StataMagics():
 
         return ''
 
-    def magic_help(self,args,kernel):
+    def magic_help(self,code,kernel):
         """
         Show help file from stata.com.
         """
-
-        code = args['code']
 
         try:
             reply = urllib.request.urlopen(self.html_help.format(code))
