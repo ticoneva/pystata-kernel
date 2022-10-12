@@ -122,7 +122,7 @@ def clean_code(code, noisily=False):
     # Replace multiple whitespace with one
     code = multi_regex.sub(' ',code)
 
-    # Add 'noisely' to each newline
+    # Add 'noisily' to each newline
     if noisily:
         cl = code.splitlines()
         co = []
