@@ -165,10 +165,6 @@ def clean_code(code, noisily=False):
                     or cs.startswith('while')
                     or in_program):
                 c = 'noisily ' + c
-            elif (cs.startswith('forv')
-                  or cs.startswith('foreach')
-                  or cs.startswith('while')):
-                c = 'quietly ' + c
             co.append(c)
 
             # Are we ending a program definition?
