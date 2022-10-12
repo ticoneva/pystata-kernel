@@ -79,7 +79,7 @@ def parse_code_if_in(code):
 # delimit_regex = re.compile(r'#delimit( |\t)+(;|cr|`.+\'|\$_.+|\$.+)')
 # but it's unnecessary, since Stata's #delimit x interprets any x other 
 # than 'cr' as switching the delimiter to ';'.
-delimit_regex = re.compile(r'#delimit(.*\s)')
+delimit_regex = re.compile(r'#delimit(.*$)', flags=re.MULTILINE)
 # Detect comments spanning multiple lines
 comment_regex = re.compile(r'((\/\/\/)(.)*(\n|\r)|(\/\*)(.|\s)*?(\*\/))')
 # Detect left Whitespace
@@ -123,7 +123,6 @@ def clean_code(code, noisily=False):
     code = multi_regex.sub(' ',code)
 
     # Add 'noisely' to each newline
-    # Add 'noisely' to each newline
     if noisily:
         cl = code.splitlines()
         co = []
@@ -138,7 +137,7 @@ def clean_code(code, noisily=False):
             if not (cs.startswith('quietly') 
                     or cs.startswith('noisily') 
                     or cs.startswith('}')
-                    or cs.startswith('forvalues')
+                    or cs.startswith('forv')
                     or cs.startswith('foreach')
                     or cs.startswith('while')
                     or in_program):
