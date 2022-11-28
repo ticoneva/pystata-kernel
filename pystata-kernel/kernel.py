@@ -19,7 +19,7 @@ class PyStataKernel(IPythonKernel):
     language_info = {
         'name': 'stata',
         'mimetype': 'text/x-stata',
-		'codemirror_mode': 'stata',
+        'codemirror_mode': 'stata',
         'file_extension': '.do',
     }
     banner = "pystata-kernel: a Jupyter kernel for Stata based on pystata"
@@ -95,15 +95,16 @@ class PyStataKernel(IPythonKernel):
         
         # Process magics
         code = self.magic_handler.magic(code,self)              
+        
+	# Execute Stata code after magics
         if code != '':
             # Supress echo?
             if self.noecho and not self.quietly:
-                from .helpers import clean_code  
-                code = clean_code(code,noisily=True)
-                self.quietly = True
-            # Execute Stata code after magics
-            from pystata.stata import run
-            run(code, quietly=self.quietly, inline=True, echo=self.echo)
+                from .helpers import noecho_run
+                noecho_run(code)
+            else:
+                from pystata.stata import run
+                run(code, quietly=self.quietly, inline=True, echo=self.echo)
 
         self.shell.execution_count += 1
 
