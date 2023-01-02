@@ -5,6 +5,10 @@ Requires Stata 17 or above.
 Consider [stata_kernel](https://github.com/kylebarron/stata_kernel) instead if you have an 
 older version of Stata. 
 
+**Note: the newest update of Stata 17 comes with a new version of pystata that breaks compatibility 
+with `pystata-kernel`. Please consider using [`nbstata`](https://github.com/hugetim/nbstata) instead,
+which is further along in development.**
+
 ### Installation
 To install `pystata-kernel`:
 
