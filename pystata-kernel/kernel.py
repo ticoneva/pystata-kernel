@@ -93,23 +93,51 @@ class PyStataKernel(IPythonKernel):
             self.echo = False
         self.quietly = False
         
-        # Process magics
-        code = self.magic_handler.magic(code,self)              
-        
-	# Execute Stata code after magics
-        if code != '':
-            # Supress echo?
-            if self.noecho and not self.quietly:
-                from .helpers import noecho_run
-                noecho_run(code)
-            else:
-                from pystata.stata import run
-                run(code, quietly=self.quietly, inline=True, echo=self.echo)
+        try:
+            # Process magics
+            code = self.magic_handler.magic(code,self)              
+            
+            # Execute Stata code after magics
+            if code != '':
+                # Supress echo?
+                if self.noecho and not self.quietly:
+                    from .helpers import noecho_run
+                    noecho_run(code)
+                else:
+                    from pystata.stata import run
+                    run(code, quietly=self.quietly, inline=True, echo=self.echo)
 
-        self.shell.execution_count += 1
 
-        return {'status': 'ok',
-            'execution_count': self.execution_count,
-            'payload': [],
-            'user_expressions': {},
-            }
+            self.shell.execution_count += 1
+
+            return {'status': 'ok',
+                'execution_count': self.execution_count,
+                'payload': [],
+                'user_expressions': {},
+                }
+
+        except SystemError as err:
+            return _handle_stata_error(err, silent, self.execution_count)
+
+def print_red(text):
+    print(f"\x1b[31m{text}\x1b[0m")
+
+def print_stata_error(text):
+    lines = text.splitlines()
+    if len(lines) > 2:
+        print("\n".join(lines[:-2]))
+    print_red("\n".join(lines[-2:]))
+
+def _handle_stata_error(err, silent, execution_count):
+    reply_content = {
+        "traceback": [],
+        "ename": "Stata error",
+        "evalue": str(err),
+    }
+    if not silent:
+        print_stata_error(reply_content['evalue'])
+    reply_content.update({
+        'status': "error",
+        'execution_count': execution_count,
+    })
+    return reply_content

@@ -228,3 +228,5 @@ def better_dataframe_from_stata(stfr, var, obs, selectvar, valuelabel, missingva
     pystata.stata.run("drop `indexvar'")
 
     return pd.DataFrame(data=data, index=idx).convert_dtypes()
+
+
