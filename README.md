@@ -5,8 +5,9 @@ Requires Stata 17 or above.
 Consider [stata_kernel](https://github.com/kylebarron/stata_kernel) instead if you have an 
 older version of Stata. 
 
-**Note: the newest update of Stata 17 comes with a new version of pystata that breaks compatibility 
-with `pystata-kernel`. Please consider using [`nbstata`](https://github.com/hugetim/nbstata) instead,
+**Note: Starting with version 0.3.0, `pystata-kernel` will be updated once every six months. 
+If new features and timely updates are important to you, 
+please consider using [`nbstata`](https://github.com/hugetim/nbstata),
 which is further along in development.**
 
 ### Installation
