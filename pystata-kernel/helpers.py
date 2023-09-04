@@ -157,7 +157,9 @@ def noecho_run(code):
 
     def _run_as_program(clean_non_prog_code):
         _program_name = "temp_pystata_kernel_program_name"
+        _program_drop_code = f"capture program drop {_program_name}"
         _program_define_code = f"program {_program_name}\n{clean_non_prog_code}\nend\n"
+        pystata.stata.run(_program_drop_code,quietly=True)
         pystata.stata.run(_program_define_code, quietly=True)
         pystata.stata.run(_program_name, quietly=False, inline=True, echo=False)
         pystata.stata.run(f"program drop {_program_name}", quietly=True)
