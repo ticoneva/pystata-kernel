@@ -5,7 +5,7 @@ Requires Stata 17 or above.
 Consider [stata_kernel](https://github.com/kylebarron/stata_kernel) instead if you have an 
 older version of Stata. 
 
-**Note: Starting with version 0.3.1, `pystata-kernel` will be updated once every six months. 
+**Note: Starting with version 0.3.2, `pystata-kernel` will be updated once every six months. 
 If new features and timely updates are important to you, 
 please consider using [`nbstata`](https://github.com/hugetim/nbstata),
 which is further along in development.**

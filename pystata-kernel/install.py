@@ -95,13 +95,16 @@ def main(argv=None):
         args.user = True
 
     install_my_kernel_spec(user=args.user, prefix=args.prefix)
-    if args.user:
-        conf_file = Path('~/.pystata-kernel.conf').expanduser()
-    else:
+
+    # Install configuration file to either sys prefix or user home directory
+    if args.sys_prefix:
         conf_dir = os.path.join(args.prefix,'etc')
         if not Path(os.path.join(args.prefix,'etc')).is_dir():
             os.mkdir(conf_dir)
         conf_file = Path(os.path.join(conf_dir,'pystata-kernel.conf'))
+    else:
+        conf_file = Path('~/.pystata-kernel.conf').expanduser()
+
     if not conf_file.is_file():
         install_conf(conf_file,args.conf_file)
 

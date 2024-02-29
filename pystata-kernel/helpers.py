@@ -27,7 +27,7 @@ def InVar(code):
     """
     Return in-statement range
     """    
-    code = code.replace(' in ','').strip()
+    code = code.replace('in ','').strip()
     slash_pos = code.find('/')
     if slash_pos == -1:
         return (None, None)
