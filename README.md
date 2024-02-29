@@ -5,7 +5,7 @@ Requires Stata 17 or above.
 Consider [stata_kernel](https://github.com/kylebarron/stata_kernel) instead if you have an 
 older version of Stata. 
 
-**Note: Starting with version 0.3.2, `pystata-kernel` will be updated once every six months. 
+**Note: Starting with version 0.3.0, `pystata-kernel` will be updated once every six months. 
 If new features and timely updates are important to you, 
 please consider using [`nbstata`](https://github.com/hugetim/nbstata),
 which is further along in development.**
@@ -28,7 +28,7 @@ installer cannot find any Stata installation.
 
 The location of the configuration file is:
 
-- `[prefix]/etc/pystata-kernel.conf` if `--sys-prefix` or `--prefix` is specified.
+- `[prefix]/etc/pystata-kernel.conf` if `--sys-prefix` is specified.
 -  `~/.pystata-kernel.conf` otherwise.
 
 If a configuration file exists in both locations, the user version takes precedent. 
